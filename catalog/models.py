@@ -1,5 +1,6 @@
 from django.db import models
 
+
 NULLABLE = {'blank': True, 'null': True}
 
 
@@ -25,7 +26,7 @@ class Product(models.Model):
     last_modified_date = models.DateTimeField(auto_now=True, verbose_name='дата последнего изменения')
 
     def __str__(self):
-        return f'{self.name} - {self.description}'
+        return f" - {self.description[:100]}. . ."
 
     class Meta:
         verbose_name = 'продукт'
