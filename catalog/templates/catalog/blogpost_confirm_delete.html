@@ -1,0 +1,24 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+<header>
+        <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+            <h1 class="display-4 fw-normal text-body-emphasis">{{ title }}</h1>
+            <p class="fs-5 text-body-secondary">Хотите удалить свой пост?</p>
+        </div>
+    </header>
+<div class="row">
+    <div class="col-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <p class="fs-5 text-body-secondary">Вы действительно хотите удалить свой пост?</p>
+                    <button type="submit" class="btn btn-danger">Подтвердить</button>
+                    <a href="{% url 'catalog:list' %}" class="btn btn-warning">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

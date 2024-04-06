@@ -1,33 +1,44 @@
 from django.shortcuts import render
-from catalog.models import Product, Category
+from django.urls import reverse_lazy
+from catalog.models import Product, Category, BlogPost
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 
-def index(request):
-    category_list = Category.objects.all()
-    context = {
-        'object_list': category_list,
+class HomeListView(ListView):
+    model = Category
+    template_name = 'catalog/index.html'
+    extra_context = {
         'title': 'Главная'
     }
-    return render(request, 'catalog/index.html', context)
 
 
-def products_in_category(request, pk):
-    category_items = Category.objects.get(pk=pk)
-    product_list = Product.objects.filter(category_id=pk)
-    context = {
-        'object_list': product_list,
-        'title': f'Товары категории {category_items.name}'
+class CategoryListView(ListView):
+    model = Category
+    template_name = 'catalog/category.html'
+    extra_context = {
+        'title': 'Категории'
     }
-    return render(request, 'catalog/products_in_category.html', context)
 
 
-def products(request):
-    product_list = Product.objects.all()
-    context = {
-        'object_list': product_list,
+class ProductsInCategoryListView(ListView):
+    model = Product
+    template_name = 'catalog/products_in_category.html'
+    extra_context = {
+        'title': 'Товары категории'
+    }
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = queryset.filter(category_id=self.kwargs.get('pk'))
+        return queryset
+
+
+class ProductListView(ListView):
+    model = Product
+    template_name = 'catalog/products.html'
+    extra_context = {
         'title': 'Наши товары'
     }
-    return render(request, 'catalog/products.html', context)
 
 
 def contacts(request):
@@ -42,4 +53,41 @@ def contacts(request):
     return render(request, 'catalog/contacts.html', context)
 
 
+class BlogPostCreateView(CreateView):
+    model = BlogPost
+    fields = ('name', 'description',)
+    success_url = reverse_lazy('catalog:list')
+    extra_context = {
+        'title': 'Ваш пост'
+    }
 
+
+class BlogPostUpdateView(UpdateView):
+    model = BlogPost
+    fields = ('name', 'description',)
+    success_url = reverse_lazy('catalog:list')
+    extra_context = {
+        'title': 'Ваш пост'
+    }
+
+
+class BlogPostListView(ListView):
+    model = BlogPost
+    extra_context = {
+        'title': 'Посты'
+    }
+
+
+class BlogPostDetailView(DetailView):
+    model = BlogPost
+    extra_context = {
+        'title': 'Ваш пост'
+    }
+
+
+class BlogPostDeleteView(DeleteView):
+    model = BlogPost
+    success_url = reverse_lazy('catalog:list')
+    extra_context = {
+        'title': 'Удалить пост'
+    }
