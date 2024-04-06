@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from pytils.translit import slugify
+
+# from pytils.translit import slugify
 from catalog.models import Product, Category, BlogPost
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
@@ -61,6 +64,14 @@ class BlogPostCreateView(CreateView):
         'title': 'Ваш пост'
     }
 
+    def form_valid(self, form):
+        if form.is_valid():
+            new_blog = form.save
+            new_blog.slug = slugify(new_blog.name)
+            new_blog.save()
+
+        return super().form_valid(form)
+
 
 class BlogPostUpdateView(UpdateView):
     model = BlogPost
@@ -70,6 +81,14 @@ class BlogPostUpdateView(UpdateView):
         'title': 'Ваш пост'
     }
 
+    def form_valid(self, form):
+        if form.is_valid():
+            new_blog = form.save
+            new_blog.slug = slugify(new_blog.name)
+            new_blog.save()
+
+        return super().form_valid(form)
+
 
 class BlogPostListView(ListView):
     model = BlogPost
@@ -77,12 +96,25 @@ class BlogPostListView(ListView):
         'title': 'Посты'
     }
 
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = queryset.filter(is_published=True)
+        return queryset
+
+
 
 class BlogPostDetailView(DetailView):
     model = BlogPost
     extra_context = {
         'title': 'Ваш пост'
     }
+
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object()
+        self.object.views_count += 1
+        self.object.save()
+        return self.object
 
 
 class BlogPostDeleteView(DeleteView):

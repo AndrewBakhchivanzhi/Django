@@ -41,3 +41,10 @@ class BlogPost(models.Model):
     is_published = models.BooleanField(default=True, verbose_name='признак публикации')
     views_count = models.IntegerField(default=0, verbose_name='количество просмотров')
 
+    def __str__(self):
+        return f'{self.name}'
+
+    class Meta:
+        verbose_name = 'пост'
+        verbose_name_plural = 'посты'
+
