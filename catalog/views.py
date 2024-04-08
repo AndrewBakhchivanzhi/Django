@@ -1,8 +1,6 @@
 from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from pytils.translit import slugify
-
-# from pytils.translit import slugify
 from catalog.models import Product, Category, BlogPost
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
@@ -76,7 +74,6 @@ class BlogPostCreateView(CreateView):
 class BlogPostUpdateView(UpdateView):
     model = BlogPost
     fields = ('name', 'description',)
-    success_url = reverse_lazy('catalog:list')
     extra_context = {
         'title': 'Ваш пост'
     }
@@ -88,6 +85,9 @@ class BlogPostUpdateView(UpdateView):
             new_blog.save()
 
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('catalog:view', args=[self.kwargs.get('pk')])
 
 
 class BlogPostListView(ListView):

@@ -9,3 +9,8 @@ def mymedia(val):
 
     return '/static/images/notimage.png'
 
+
+@register.filter()
+def mysplit(val):
+    return val[:100]
+
